@@ -55,4 +55,4 @@ df = df[~df.time_range.str.contains('Count Type:')]
 df = df.reset_index(drop=True)
 
 #export to csv
-df.to_csv('TRICS_export.csv')
+df.to_csv('TRICS_export.csv', index=False)
