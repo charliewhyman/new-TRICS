@@ -5,7 +5,15 @@
 
 import pandas as pd
 import numpy as np
-trip_rates = pd.read_csv('TRICS.CSV', names = ['time_range',
+from tkinter import Tk     # from tkinter import Tk for Python 3.x
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+input_csv = askopenfilename(title="Select downloaded TRICS csv file", filetypes=[("csv files", "*.csv")]) # show an "Open" dialog box and return the path to the selected file
+print(input_csv)
+
+
+trip_rates = pd.read_csv(input_csv, names = ['time_range',
                                        'arrival_days',
                                        'arrival_GFA',
                                        'arrival_trip_rate',
@@ -55,4 +63,9 @@ trip_rates = trip_rates[~trip_rates.time_range.str.contains('Count Type:')]
 trip_rates = trip_rates.reset_index(drop=True)
 
 #export to csv
-trip_rates.to_csv('trip_rates.csv', index=False)
+Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+output_csv = asksaveasfilename(title="Choose where to save trip rate csv", defaultextension=".csv", filetypes=(("csv file", "*.csv"),)) # show an "Open" dialog box and return the path to the selected file
+print(output_csv)
+
+print("Exporting to "+output_csv)
+trip_rates.to_csv(output_csv, index=False)
