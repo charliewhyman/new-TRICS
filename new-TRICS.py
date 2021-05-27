@@ -5,7 +5,7 @@
 
 import pandas as pd
 import numpy as np
-df = pd.read_csv('TRICS.CSV', names = ['time_range',
+trip_rates = pd.read_csv('TRICS.CSV', names = ['time_range',
                                        'arrival_days',
                                        'arrival_GFA',
                                        'arrival_trip_rate',
@@ -18,41 +18,41 @@ df = pd.read_csv('TRICS.CSV', names = ['time_range',
 
 #clean data based on the time_range column
 #remove blank rows
-df = df[pd.notnull(df['time_range'])]
+trip_rates = trip_rates[pd.notnull(trip_rates['time_range'])]
 
 #convert time_range column to string
-df['time_range'] = df['time_range'].apply(str)
+trip_rates['time_range'] = trip_rates['time_range'].apply(str)
 
 #replace blank strings with na
-df = df.replace(r'^\s*$', np.NaN, regex=True)
+trip_rates = trip_rates.replace(r'^\s*$', np.NaN, regex=True)
 
 #remove header rows starting with values in searchfor list
 search_strings = ['TRIP RATE', 'Calculation Factor','Time Range', 'Daily Trip Rates:']
-df = df[~df.time_range.str.contains('|'.join(search_strings))]
+trip_rates = trip_rates[~trip_rates.time_range.str.contains('|'.join(search_strings))]
 
 
 #create a new column containing count type values
-df['count_type'] = np.where(df.time_range.str.startswith('Count Type:', na = False), df.time_range,np.nan)
+trip_rates['count_type'] = np.where(trip_rates.time_range.str.startswith('Count Type:', na = False), trip_rates.time_range,np.nan)
 
 
 #remove the 'Count Type: ' prefix from the new column
-df['count_type'] = df['count_type'].str.split(': ').str[-1]
+trip_rates['count_type'] = trip_rates['count_type'].str.split(': ').str[-1]
 
 
 #fill down count values
-df['count_type'] = df['count_type'].ffill()
+trip_rates['count_type'] = trip_rates['count_type'].ffill()
 
 
 #The data tables start after the count type definitions, for example 'Count Type: TAXIS'
 #remove rows before the first count type occurance
-df = df[(df.time_range.str.startswith('Count Type:', na = False)).idxmax():]
+trip_rates = trip_rates[(trip_rates.time_range.str.startswith('Count Type:', na = False)).idxmax():]
 
 #remove rows where time_range starts with 'Count Type: '
-df = df[~df.time_range.str.contains('Count Type:')]
+trip_rates = trip_rates[~trip_rates.time_range.str.contains('Count Type:')]
 
 
 #reset index
-df = df.reset_index(drop=True)
+trip_rates = trip_rates.reset_index(drop=True)
 
 #export to csv
-df.to_csv('TRICS_export.csv', index=False)
+trip_rates.to_csv('trip_rates.csv', index=False)
