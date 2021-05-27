@@ -47,15 +47,15 @@ trip_rates['count_type'] = trip_rates['count_type'].str.split(': ').str[-1]
 #fill down count values
 trip_rates['count_type'] = trip_rates['count_type'].ffill()
 
+#reset index to ensure 'startswith' functions correctly
+trip_rates = trip_rates.reset_index(drop=True)
+
 #The data tables start after the count type definitions, for example 'Count Type: TAXIS'
 #remove rows before the first count type occurance
 trip_rates = trip_rates[(trip_rates.time_range.str.startswith('Count Type:', na = False)).idxmax():]
 
 #remove rows where time_range starts with 'Count Type: '
 trip_rates = trip_rates[~trip_rates.time_range.str.contains('Count Type:')]
-
-#reset index
-trip_rates = trip_rates.reset_index(drop=True)
 
 #export to xlsx
 Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
@@ -85,7 +85,5 @@ worksheet.set_column(0, max_col - 1, 12)
 
 # Close the Pandas Excel writer and output the Excel file.
 writer.save()
-
-#create trip rate graphs
 
 
