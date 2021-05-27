@@ -52,7 +52,7 @@ trip_rates = trip_rates.reset_index(drop=True)
 
 #The data tables start after the count type definitions, for example 'Count Type: TAXIS'
 #remove rows before the first count type occurance
-trip_rates = trip_rates[(trip_rates.time_range.str.startswith('Count Type:', na = False)).idxmax():]
+trip_rates = trip_rates[(trip_rates.time_range.str.startswith('Count Type:', na = False)).idxmax():trip_rates.time_range.str.startswith('Parameter summary', na = False).idxmax()]
 
 #remove rows where time_range starts with 'Count Type: '
 trip_rates = trip_rates[~trip_rates.time_range.str.contains('Count Type:')]
