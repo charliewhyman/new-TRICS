@@ -34,22 +34,18 @@ trip_rates['time_range'] = trip_rates['time_range'].apply(str)
 #replace blank strings with na
 trip_rates = trip_rates.replace(r'^\s*$', np.NaN, regex=True)
 
-#remove header rows starting with values in searchfor list
+#remove header rows starting with values in search_strings list
 search_strings = ['TRIP RATE', 'Calculation Factor','Time Range', 'Daily Trip Rates:']
 trip_rates = trip_rates[~trip_rates.time_range.str.contains('|'.join(search_strings))]
-
 
 #create a new column containing count type values
 trip_rates['count_type'] = np.where(trip_rates.time_range.str.startswith('Count Type:', na = False), trip_rates.time_range,np.nan)
 
-
 #remove the 'Count Type: ' prefix from the new column
 trip_rates['count_type'] = trip_rates['count_type'].str.split(': ').str[-1]
 
-
 #fill down count values
 trip_rates['count_type'] = trip_rates['count_type'].ffill()
-
 
 #The data tables start after the count type definitions, for example 'Count Type: TAXIS'
 #remove rows before the first count type occurance
@@ -58,13 +54,12 @@ trip_rates = trip_rates[(trip_rates.time_range.str.startswith('Count Type:', na 
 #remove rows where time_range starts with 'Count Type: '
 trip_rates = trip_rates[~trip_rates.time_range.str.contains('Count Type:')]
 
-
 #reset index
 trip_rates = trip_rates.reset_index(drop=True)
 
 #export to csv
 Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-output_csv = asksaveasfilename(title="Choose where to save trip rate csv", defaultextension=".csv", filetypes=(("csv file", "*.csv"),)) # show an "Open" dialog box and return the path to the selected file
+output_csv = asksaveasfilename(title="Choose where to save trip rate csv", defaultextension=".csv", filetypes=(("csv file", "*.csv"),)) # show an "Save" dialog box and return the path to the selected file
 print(output_csv)
 
 print("Exporting to "+output_csv)
